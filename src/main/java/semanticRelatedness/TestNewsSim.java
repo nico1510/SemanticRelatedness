@@ -1,10 +1,14 @@
 package semanticRelatedness;
 
+import distanceMetrics.CosineDistance;
+import distanceMetrics.DistanceMetric;
+import distanceMetrics.Norm;
+import distanceMetrics.NormalizedRelevanceDistance;
+import distanceMetrics.ScalarProduct;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -22,7 +26,7 @@ public class TestNewsSim {
 
 
 	static String field = "contents";
-	static String indexPath = "/home/chrisschaefer/Documents/lucene-wikipedia05";
+	static String indexPath = "/home/nico/Schreibtisch/Master/NRD-Classifier/indexes/enwiki-20140903-lucene2";
 	static IndexReader reader;
 	static IndexSearcher searcher;
 	static Analyzer analyzer;
@@ -36,12 +40,14 @@ public class TestNewsSim {
 		//ESASimilarity similarity = new ESASimilarity();
 		DefaultSimilarity similarity = new DefaultSimilarity();
 		searcher.setSimilarity(similarity);
-		
+                DistanceMetric distanceMetric = new NormalizedRelevanceDistance();
+		Norm norm = Norm.MAX_NORM;
+                
 //		Analyzer analyzer = new WikipediaAnalyzer();
 		analyzer = new StandardAnalyzer(Version.LUCENE_4_9);
 		parser = new QueryParser(Version.LUCENE_4_9, field, analyzer);
 
-		FileReader is = new FileReader("/home/chrisschaefer/Documents/gesa/LeeSimOriginal.txt");
+		FileReader is = new FileReader("/home/nico/Master/LeeSimOriginal.txt");
 		BufferedReader br = new BufferedReader(is);
 		double[] expectedResults = new double[1275];
 		int i = 0, index = 0;
@@ -58,13 +64,13 @@ public class TestNewsSim {
 		br.close();
 		
 		// read Lee's newspaper articles
-		is = new FileReader("/home/chrisschaefer/Documents/gesa/lee.cor");
+		is = new FileReader("/home/nico/Master/lee.cor");
 		br = new BufferedReader(is);
 		VectorSpaceCentroid[] leesCorpus = new VectorSpaceCentroid[50];
 		i = 0;
 		index = 0;
 		while((line = br.readLine()) != null){
-			leesCorpus[i] = new VectorSpaceCentroid(reader, searcher, similarity, parser, line);
+			leesCorpus[i] = new VectorSpaceCentroid(reader, searcher, similarity, parser, line, norm);
 			System.out.print(i);
 			i++;
 		}
@@ -82,7 +88,7 @@ public class TestNewsSim {
 					index++;
 				}
 				else {
-					val = VectorSpaceCentroid.normalizedRelevanceDistance(leesCorpus[i], leesCorpus[j]);
+					val = distanceMetric.getDistance(leesCorpus[i], leesCorpus[j]);
 					result[index] = val;
 					index++;
 				}

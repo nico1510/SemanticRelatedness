@@ -53,10 +53,10 @@ public class MakeLuceneIndex {
 	 * @throws UnsupportedEncodingException 
 	 * @throws FileNotFoundException */
 	public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException {
-		String baseDir = "/home/chrisschaefer/";
+		String baseDir = "/home/nico/Schreibtisch/Master/NRD-Classifier/indexes/";
 		//String wikiDumpFile = "Downloads/enwiki-20130604-pages-articles.xml.bz2";
-		String wikiDumpFile = "enwiki-20130604-pages-articlese.xml.bz2";
-		String luceneIndexName = "enwiki-20130604-lucene2";
+		String wikiDumpFile = "enwiki-20140903-pages-articles.xml.bz2";
+		String luceneIndexName = "enwiki-20140903-lucene2";
 
 		System.currentTimeMillis();
 		boolean bIgnoreStubs = false;
